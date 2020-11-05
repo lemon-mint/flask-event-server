@@ -27,5 +27,6 @@ jobs:
           python -m pip install -r requirements.txt
           python -m pip install -r dev.txt
           python app.py &
+          sleep 5
           python test.py
           

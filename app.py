@@ -1,6 +1,8 @@
 import json
 import secrets
 import time
+import os
+import hashlib
 
 from flask import (Flask, Request, Response, flash, jsonify, redirect,
                    render_template)
@@ -55,7 +57,7 @@ def sse_deploy(ch):
             },
             event=eventname
         )
-        msgq.deploy(msg, ch)
+        msgq.deploy(msg, hashlib.sha384(str(ch).encode('ascii')).hexdigest())
         return jsonify(
             {
                 'success': True,
@@ -72,6 +74,10 @@ def sse_deploy(ch):
         }
     ), 500
 
+@app.route('/calc/<ch>')
+def calc(ch):
+    return hashlib.sha384(str(ch).encode('ascii')).hexdigest()
+
 
 @app.route('/sse/test')
 def testpage():
@@ -82,7 +88,7 @@ if __name__ == "__main__":
     from cheroot.wsgi import PathInfoDispatcher as WSGIPathInfoDispatcher
     from cheroot.wsgi import Server as WSGIServer
     my_app = WSGIPathInfoDispatcher({'/': app})
-    server = WSGIServer(('0.0.0.0', 32000), my_app)
+    server = WSGIServer(('0.0.0.0', int(os.environ.get('PORT',9064)) ), my_app)
     try:
         server.start()
     except KeyboardInterrupt:

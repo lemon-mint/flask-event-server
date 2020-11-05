@@ -2,7 +2,7 @@ name: build-latest
 
 on:
     push:
-        branches: latest
+        branches: [ latest ]
         tags:
             - v*
 

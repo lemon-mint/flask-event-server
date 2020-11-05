@@ -7,7 +7,7 @@ RUN apk add py3-pip
 ADD . /app
 WORKDIR /app
 
-RUN python3 -m pip install -r requirement.txt
+RUN python3 -m pip install -r requirements.txt
 
 EXPOSE 32729
 CMD python3 app.py

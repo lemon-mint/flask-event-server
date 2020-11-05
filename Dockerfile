@@ -9,5 +9,5 @@ WORKDIR /app
 
 RUN python3 -m pip install -r requirement.txt
 
-EXPOSE 9064
+EXPOSE 32729
 CMD python3 app.py

@@ -1,2 +1,2 @@
-flask
-cheroot
+Flask==1.1.2
+cheroot==8.4.5

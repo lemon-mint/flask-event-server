@@ -1,0 +1,7 @@
+{
+  "name": "flask-event-server",
+  "description": "flask sse server",
+  "repository": "https://github.com/lemon-mint/flask-event-server",
+  "logo": "https://i.ibb.co/Wgb3kt5/logo.png",
+  "keywords": ["python", "flask"]
+}

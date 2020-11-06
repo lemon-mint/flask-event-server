@@ -1,13 +1,13 @@
 import queue
 
-class MQSSE:
 
+class MQSSE:
     def __init__(self):
         self.sse_queue = []
 
-    def listen(self,id):
+    def listen(self, id):
         msg_queue = queue.Queue(maxsize=10)
-        self.sse_queue.append({'queue': msg_queue,'id':id})
+        self.sse_queue.append({'queue': msg_queue, 'id': id})
         return msg_queue
 
     def deploy(self, msg, id):

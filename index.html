@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Event Server</title>
+</head>
+
+<body>
+    <h1>APIS</h1>
+    <h2>/sse/listen/&lt;sha384 hash of channel name&gt;</h2>
+    <p>example code</p>
+    <pre class="javascript"
+        style="font-family:monospace;"><span style="color: #000066; font-weight: bold;">var</span> evt <span style="color: #339933;">=</span> <span style="color: #000066; font-weight: bold;">new</span> EventSource<span style="color: #009900;">&#40;</span><span style="color: #3366CC;">'/sse/listen/cf2daa804389e2eedd4fdc41e32e1f481a5ec493b956ece1d4d0fa2427188636bfe0b1abc462677e54b1d8d7447bc494'</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span>
+    evt.<span style="color: #660066;">addEventListener</span><span style="color: #009900;">&#40;</span><span style="color: #3366CC;">'open'</span><span style="color: #339933;">,</span> <span style="color: #000066; font-weight: bold;">function</span><span style="color: #009900;">&#40;</span>e<span style="color: #009900;">&#41;</span> <span style="color: #009900;">&#123;</span>
+        console.<span style="color: #660066;">log</span><span style="color: #009900;">&#40;</span><span style="color: #3366CC;">'connection opened'</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span>
+    <span style="color: #009900;">&#125;</span><span style="color: #339933;">,</span> <span style="color: #003366; font-weight: bold;">false</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span>
+    evt.<span style="color: #660066;">addEventListener</span><span style="color: #009900;">&#40;</span><span style="color: #3366CC;">'myevent'</span><span style="color: #339933;">,</span> <span style="color: #000066; font-weight: bold;">function</span><span style="color: #009900;">&#40;</span>e<span style="color: #009900;">&#41;</span> <span style="color: #009900;">&#123;</span>
+        console.<span style="color: #660066;">log</span><span style="color: #009900;">&#40;</span>e<span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span>
+    <span style="color: #009900;">&#125;</span><span style="color: #339933;">,</span> <span style="color: #003366; font-weight: bold;">false</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span>
+    evt.<span style="color: #660066;">addEventListener</span><span style="color: #009900;">&#40;</span><span style="color: #3366CC;">'error'</span><span style="color: #339933;">,</span> <span style="color: #000066; font-weight: bold;">function</span><span style="color: #009900;">&#40;</span>e<span style="color: #009900;">&#41;</span> <span style="color: #009900;">&#123;</span>
+        <span style="color: #000066; font-weight: bold;">if</span> <span style="color: #009900;">&#40;</span>e.<span style="color: #660066;">eventPhase</span> <span style="color: #339933;">==</span> EventSource.<span style="color: #660066;">CLOSED</span><span style="color: #009900;">&#41;</span> <span style="color: #009900;">&#123;</span>
+            console.<span style="color: #660066;">log</span><span style="color: #009900;">&#40;</span><span style="color: #3366CC;">'connection closed'</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span>
+        <span style="color: #009900;">&#125;</span>
+    <span style="color: #009900;">&#125;</span><span style="color: #339933;">,</span> <span style="color: #003366; font-weight: bold;">false</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span></pre>
+    <h2>/sse/deploy/&lt;channel name&gt;</h2>
+    <pre><code>GET /sse/deploy/mychannel?type=myevent&amp;sub=1000
+
+{&quot;eventid&quot;:&quot;ab7dca31b9dea1bebf5e&quot;,&quot;sub&quot;:1000,&quot;success&quot;:true,&quot;time&quot;:1604566637.6499722}
+</code></pre>
+    <h2>/calc/&lt;channel name&gt;</h2>
+    <p>Calculate the sha384 value of the channel name.</p>
+    <pre><code>GET /calc/mychannel
+
+cf2daa804389e2eedd4fdc41e32e1f481a5ec493b956ece1d4d0fa2427188636bfe0b1abc462677e54b1d8d7447bc494
+</code></pre>
+
+</body>
+
+</html>

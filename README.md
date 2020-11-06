@@ -6,6 +6,9 @@ EventSource server side event server
 ### stable
 [![buildstate](https://github.com/lemon-mint/flask-event-server/workflows/build-latest/badge.svg)](https://hub.docker.com/r/icelemonmint/flask-event-server)
 
+### dev version
+[![build-dev-latest](https://github.com/lemon-mint/flask-event-server/workflows/build-dev-latest/badge.svg?branch=master)](https://hub.docker.com/r/icelemonmint/flask-event-server-dev)
+
 # APIS
 ## /sse/listen/\<sha384 hash of channel name\>
 example code

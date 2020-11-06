@@ -1,8 +1,8 @@
+import hashlib
 import json
+import os
 import secrets
 import time
-import os
-import hashlib
 
 from flask import (Flask, Request, Response, flash, jsonify, redirect,
                    render_template)
@@ -20,7 +20,7 @@ msgq = sse.MQSSE()
 def make_event(data: dict, event="default") -> str:
     msg = 'data: {}\n\n'.format(json.dumps(data))
     if event is not None:
-        msg = 'event: {}\n{}'.format(event,msg)
+        msg = 'event: {}\n{}'.format(event, msg)
     return msg
 
 
@@ -74,6 +74,7 @@ def sse_deploy(ch):
         }
     ), 500
 
+
 @app.route('/calc/<ch>')
 def calc(ch):
     return hashlib.sha384(str(ch).encode('ascii')).hexdigest()
@@ -86,14 +87,25 @@ def testpage():
 
 @app.route('/favicon.ico')
 def __favicon__():
-    return send_from_directory('.','favicon.ico')
+    return send_from_directory('.', 'favicon.ico')
+
+
+@app.route('/')
+def __index_html__():
+    return send_from_directory('.', 'index.html')
+
+
+@app.route('/robots.txt')
+def __robots_txt__():
+    return send_from_directory('.', 'robots.txt')
 
 
 if __name__ == "__main__":
     from cheroot.wsgi import PathInfoDispatcher as WSGIPathInfoDispatcher
     from cheroot.wsgi import Server as WSGIServer
     my_app = WSGIPathInfoDispatcher({'/': app})
-    server = WSGIServer(('0.0.0.0', int(os.environ.get('PORT',32729)) ), my_app)
+    server = WSGIServer(
+        ('0.0.0.0', int(os.environ.get('PORT', 32729))), my_app)
     try:
         server.start()
     except KeyboardInterrupt:

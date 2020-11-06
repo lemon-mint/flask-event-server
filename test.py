@@ -22,7 +22,7 @@ if resp.status_code == 200:
     chid_hash = resp.text
     resp = requests.get('http://127.0.0.1:32729/sse/deploy/{}'.format(chid))
     assert resp.status_code == 200
-    exit(1)
+    exit(0)
 else:
     exit(-1)
 exit(-1)

@@ -1,7 +1,7 @@
 # flask-event-server
 flask-event-server
 Is minimal and unoptimized
-EventSource server side event server
+Server-Sent Events Server
 
 ### stable
 [![buildstate](https://github.com/lemon-mint/flask-event-server/workflows/build-latest/badge.svg)](https://hub.docker.com/r/icelemonmint/flask-event-server)

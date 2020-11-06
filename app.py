@@ -90,6 +90,16 @@ def __favicon__():
     return send_from_directory('.', 'favicon.ico')
 
 
+@app.route('/')
+def __index_html__():
+    return send_from_directory('.', 'index.html')
+
+
+@app.route('/robots.txt')
+def __robots_txt__():
+    return send_from_directory('.', 'robots.txt')
+
+
 if __name__ == "__main__":
     from cheroot.wsgi import PathInfoDispatcher as WSGIPathInfoDispatcher
     from cheroot.wsgi import Server as WSGIServer

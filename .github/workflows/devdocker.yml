@@ -1,8 +1,11 @@
-name: build-latest
+#flask-event-server-dev
+name: build-dev-latest
 
 on:
+    schedule:
+      - cron: '0 0 * * *'
     push:
-        branches: [ latest ]
+        branches: [ master ]
         tags:
             - v*
 
@@ -25,4 +28,4 @@ jobs:
               with:
                   platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x
                   push: true
-                  tags: icelemonmint/flask-event-server:latest
+                  tags: icelemonmint/flask-event-server-dev:latest

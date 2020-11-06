@@ -18,9 +18,9 @@ msgq = sse.MQSSE()
 
 
 def make_event(data: dict, event="default") -> str:
-    msg = f'data: {json.dumps(data)}\n\n'
+    msg = 'data: {}\n\n'.format(json.dumps(data))
     if event is not None:
-        msg = f'event: {event}\n{msg}'
+        msg = 'event: {}\n{}'.format(event,msg)
     return msg
 
 

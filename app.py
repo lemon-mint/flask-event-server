@@ -17,10 +17,11 @@ app = Flask(__name__)
 msgq = sse.MQSSE()
 
 
-def make_event(data: dict, event="default") -> str:
+def make_event(data: dict, event=None) -> str:
     msg = 'data: {}\n\n'.format(json.dumps(data))
-    if event is not None:
+    if event:
         msg = 'event: {}\n{}'.format(event, msg)
+    msg = 'id: {}\n{}'.format(data['eventid'], msg)
     return msg
 
 
@@ -46,17 +47,24 @@ def sse_deploy(ch):
             event_type = 9999
         curtime = time.time()
         eventid = secrets.token_hex(10)
-        eventname = 'default'
         if fr.args.get('type') and 0 < len(str(fr.args.get('type'))) and len(str(fr.args.get('type'))) < 16:
             eventname = str(fr.args.get('type'))
-        msg = make_event(
-            data={
-                'time': curtime,
-                'eventid': eventid,
-                'sub': event_type
-            },
-            event=eventname
-        )
+            msg = make_event(
+                data={
+                    'time': curtime,
+                    'eventid': eventid,
+                    'sub': event_type
+                },
+                event=eventname
+            )
+        else:
+            msg = make_event(
+                data={
+                    'time': curtime,
+                    'eventid': eventid,
+                    'sub': event_type
+                }
+            )
         msgq.deploy(msg, hashlib.sha384(str(ch).encode('ascii')).hexdigest())
         return jsonify(
             {

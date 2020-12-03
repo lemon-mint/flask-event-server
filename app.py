@@ -3,6 +3,7 @@ import json
 import os
 import secrets
 import time
+import base64
 
 from flask import (Flask, Request, Response, flash, jsonify, redirect,
                    render_template)
@@ -93,7 +94,8 @@ def deploy_and_redirect(ch, url):
         }
     )
     msgq.deploy(msg, hashlib.sha384(str(ch).encode('ascii')).hexdigest())
-    return redirect(url)
+    print(url)
+    return redirect(base64.urlsafe_b64decode(url).decode('utf-8'))
 
 @app.route('/calc/<ch>')
 def calc(ch):

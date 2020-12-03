@@ -83,6 +83,18 @@ def sse_deploy(ch):
     ), 500
 
 
+@app.route('/sse/redirect/<ch>/<url>')
+def deploy_and_redirect(ch, url):
+    msg = make_event(
+        data={
+            'time': time.time(),
+            'eventid': secrets.token_hex(10),
+            'sub': 9999
+        }
+    )
+    msgq.deploy(msg, hashlib.sha384(str(ch).encode('ascii')).hexdigest())
+    return redirect(url)
+
 @app.route('/calc/<ch>')
 def calc(ch):
     return hashlib.sha384(str(ch).encode('ascii')).hexdigest()

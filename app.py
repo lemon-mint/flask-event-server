@@ -28,13 +28,28 @@ def make_event(data: dict, event=None) -> str:
 
 @app.route('/sse/listen/<ch>')
 def sse_abcd(ch):
-    def stream(ch):
+    def stream(ch,ctx):
         messages = msgq.listen(ch)
         yield ":ok\n\n"
+        heartbeat = None
+        if ctx:
+            heartbeat = 10
+            try:
+                heartbeat = int(ctx)
+            except:
+                pass
+        if heartbeat:
+            nextbeat = time.time() + heartbeat
         while True:
-            msg = messages.get()
-            yield msg
-    resp = Response(stream(ch), mimetype='text/event-stream')
+            try:
+                msg = messages.get(timeout=5)
+                yield msg
+            except:
+                pass
+            if heartbeat and time.time() > nextbeat:
+                nextbeat = time.time() + heartbeat
+                yield ":heartbeat\n\n"
+    resp = Response(stream(ch,fr.args.get('heartbeat')), mimetype='text/event-stream')
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 

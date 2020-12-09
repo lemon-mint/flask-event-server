@@ -3,6 +3,7 @@ import json
 import os
 import secrets
 import time
+import base64
 
 from flask import (Flask, Request, Response, flash, jsonify, redirect,
                    render_template)
@@ -17,22 +18,38 @@ app = Flask(__name__)
 msgq = sse.MQSSE()
 
 
-def make_event(data: dict, event="default") -> str:
+def make_event(data: dict, event=None) -> str:
     msg = 'data: {}\n\n'.format(json.dumps(data))
-    if event is not None:
+    if event:
         msg = 'event: {}\n{}'.format(event, msg)
+    msg = 'id: {}\n{}'.format(data['eventid'], msg)
     return msg
 
 
 @app.route('/sse/listen/<ch>')
 def sse_abcd(ch):
-    def stream(ch):
+    def stream(ch,ctx):
         messages = msgq.listen(ch)
         yield ":ok\n\n"
+        heartbeat = None
+        if ctx:
+            heartbeat = 10
+            try:
+                heartbeat = int(ctx)
+            except:
+                pass
+        if heartbeat:
+            nextbeat = time.time() + heartbeat
         while True:
-            msg = messages.get()
-            yield msg
-    resp = Response(stream(ch), mimetype='text/event-stream')
+            try:
+                msg = messages.get(timeout=5)
+                yield msg
+            except:
+                pass
+            if heartbeat and time.time() > nextbeat:
+                nextbeat = time.time() + heartbeat
+                yield ":heartbeat\n\n"
+    resp = Response(stream(ch,fr.args.get('heartbeat')), mimetype='text/event-stream')
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 
@@ -46,17 +63,24 @@ def sse_deploy(ch):
             event_type = 9999
         curtime = time.time()
         eventid = secrets.token_hex(10)
-        eventname = 'default'
         if fr.args.get('type') and 0 < len(str(fr.args.get('type'))) and len(str(fr.args.get('type'))) < 16:
             eventname = str(fr.args.get('type'))
-        msg = make_event(
-            data={
-                'time': curtime,
-                'eventid': eventid,
-                'sub': event_type
-            },
-            event=eventname
-        )
+            msg = make_event(
+                data={
+                    'time': curtime,
+                    'eventid': eventid,
+                    'sub': event_type
+                },
+                event=eventname
+            )
+        else:
+            msg = make_event(
+                data={
+                    'time': curtime,
+                    'eventid': eventid,
+                    'sub': event_type
+                }
+            )
         msgq.deploy(msg, hashlib.sha384(str(ch).encode('ascii')).hexdigest())
         return jsonify(
             {
@@ -74,6 +98,19 @@ def sse_deploy(ch):
         }
     ), 500
 
+
+@app.route('/sse/redirect/<ch>/<url>')
+def deploy_and_redirect(ch, url):
+    msg = make_event(
+        data={
+            'time': time.time(),
+            'eventid': secrets.token_hex(10),
+            'sub': 9999
+        }
+    )
+    msgq.deploy(msg, hashlib.sha384(str(ch).encode('ascii')).hexdigest())
+    print(url)
+    return redirect(base64.urlsafe_b64decode(url).decode('utf-8'))
 
 @app.route('/calc/<ch>')
 def calc(ch):

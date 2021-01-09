@@ -1,3 +1,7 @@
+# Deprecated
+This project was discontinued due to internal structural problems. Please check
+[lemon-mint/event-broker](https://github.com/lemon-mint/event-broker)
+
 # flask-event-server
 flask-event-server
 Is minimal and unoptimized
